@@ -1,7 +1,9 @@
 from commands import cmds, docs, helptext #this is messy
+from games_manager import GamesManager
 
 class Bot:
     prefix = "c!"
+    gm = GamesManager()
 
     def __init__(self, client):
         self.client = client

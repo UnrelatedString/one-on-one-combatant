@@ -27,9 +27,14 @@ async def challenge(bot, args, message):
         await ch.send('You must mention a user to challenge them.')
         return
     opponent = message.mentions[0]
+    ret = await bot.gm.challenge(message.author, opponent)
+    if ret:
+        await ch.send(ret)
+        return
     await ch.send(f'{message.author.display_name} has challenged {opponent.display_name} to a duel!\nThey have {timeout} seconds to accept with `{bot.prefix}accept @{message.author.display_name}`')
     await asyncio.sleep(timeout)
-    await ch.send('Challenge timed out.')
+    if await bot.gm.expire(message.author):
+        await ch.send('Challenge timed out.')
 
 @cmd('a')
 async def accept(bot, args, message):
@@ -39,9 +44,14 @@ async def accept(bot, args, message):
         await ch.send("You can't accept nobody's challenge!")
         return
     opponent = message.mentions[0]
-    await ch.send('sike')
+    ret = await bot.gm.accept(opponent, message.author)
+    if ret:
+        await ch.send(ret)
+        return
+    await ch.send('Accepted!')
+    await bot.gm.start_game(ch, message.author, opponent)
 
-@cmd('e','k')
+@cmd('exit','e','k')
 async def kill(bot, args, message):
     '''DELETE THIS LATER but hell if it isn't easier than quitting the process'''
     await bot.client.close()
