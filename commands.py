@@ -22,7 +22,7 @@ async def help(bot, args, message):
 async def challenge(bot, args, message):
     '''Requests a game from mentioned user.'''
     ch = message.channel
-    timeout = 60
+    timeout = 30
     if not message.mentions:
         await ch.send('You must mention a user to challenge them.')
         return
