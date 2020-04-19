@@ -12,7 +12,7 @@ def cmd(*aliases):
     return ind
 
 @cmd('h')
-async def help(bot, message):
+async def help(bot, args, message):
     '''Prints this list of commands.'''
     await message.channel.send(helptext)
 

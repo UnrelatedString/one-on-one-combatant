@@ -17,7 +17,7 @@ class Bot:
             text = message.content[len(prefix):] or '[blank]'
             cmd = text.split()[0]
             if cmd.lower() in cmds:
-                await cmds[cmd](self, message)
+                await cmds[cmd](self, text[len(cmd)+1:], message)
             else:
                 await message.channel.send(f"{cmd} is not a valid command. Use {prefix}help")
 
