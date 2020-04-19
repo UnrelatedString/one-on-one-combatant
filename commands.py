@@ -26,9 +26,18 @@ async def challenge(bot, args, message):
         await ch.send('You must mention a user to challenge them.')
         return
     opponent = message.mentions[0]
-    await ch.send(f'{message.author.display_name} has challenged {opponent.display_name} to a duel!\nThey have {timeout} seconds to accept.')
+    await ch.send(f'{message.author.display_name} has challenged {opponent.display_name} to a duel!\nThey have {timeout} seconds to accept with `{bot.prefix}accept @{message.author.display_name}`')
     await asyncio.sleep(timeout)
     await ch.send('Challenge timed out.')
+
+@cmd('a')
+async def accept(bot, args, message):
+    ch = message.channel
+    if not message.mentions:
+        await ch.send("You can't accept nobody's challenge!")
+        return
+    opponent = message.mentions[0]
+    await ch.send('sike')
 
 for names in sorted(docs):
     helptext += f'> **{", ".join(names)}:** {docs[names]}\n'
