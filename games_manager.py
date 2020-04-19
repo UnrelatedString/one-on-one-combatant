@@ -1,27 +1,36 @@
+from game import Game
+
 class GamesManager:
-    challenges = {} #user id: user id, maybe throw Guild in there
-    games = {} #user id: Game
+    challenges = {} #Member: Member
+    games = {} #Member: Game
 
     async def challenge(self, challenger, challenged):
-        if challenger.id in self.challenges:
+        if challenger in self.challenges:
             return "You must wait for your first challenge to expire!"
-        if challenger.id in self.games:
+        if challenger in self.games:
             return "You are already in game!"
-        self.challenges[challenger.id] = challenged.id
+        self.challenges[challenger] = challenged
 
     async def accept(self, challenger, challenged):
-        if self.challenges.get(challenger.id, None) != challenged.id:
+        if self.challenges.get(challenger, None) != challenged:
             return f"{challenger.display_name} has not challenged you!"
-        if challenged.id in self.games:
+        if challenged in self.games:
             return "You are already in game!"
-        del self.challenges[challenger.id]
+        del self.challenges[challenger]
 
     async def expire(self, challenger):
-        if challenger.id in self.challenges:
-            del self.challenges[challenger.id]
+        if challenger in self.challenges:
+            del self.challenges[challenger]
             return True
         else:
             return False
 
     async def start_game(self, ch, player1, player2):
-        await ch.send(f"{player1.display_name} ambushes {player2.display_name}, winning instantly. lul")
+        game = Game(ch, player1, player2)
+        self.games[player1] = game
+        self.games[player2] = game
+        await game.start()
+        del self.games[player1]
+        if player2 in self.games: #could be playing myself
+            del self.games[player2]
+        await ch.send("GAME OVER")
