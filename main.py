@@ -1,10 +1,10 @@
 import discord
 
-from on_message import register_message_handler
+from bot import Bot
 
 def run_bot():
     client = discord.Client()
-    register_message_handler(client)
+    bot = Bot(client)
     with open('token.txt') as tokf:
         tok = tokf.read()
         print(tok)
