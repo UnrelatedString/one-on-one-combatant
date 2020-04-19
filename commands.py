@@ -41,5 +41,10 @@ async def accept(bot, args, message):
     opponent = message.mentions[0]
     await ch.send('sike')
 
+@cmd('e','k')
+async def kill(bot, args, message):
+    '''DELETE THIS LATER but hell if it isn't easier than quitting the process'''
+    await bot.client.close()
+
 for names in sorted(docs): #handle >2000 at some point maybe? eh
     helptext += f'> **{", ".join(names)}:** {docs[names]}\n'
