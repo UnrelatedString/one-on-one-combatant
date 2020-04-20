@@ -10,7 +10,7 @@ class Game:
 
     async def start(self):
         self.task = asyncio.ensure_future(self.main())
-        await self.task
+        await asyncio.wait_for(self.task, None)
 
     async def main(self):
         await asyncio.sleep(30)
@@ -20,5 +20,5 @@ class Game:
         self.task.cancel()
 
     async def forfeit(self, player):
-        await elf.ch.send(f"{self.player1 if player == self.player2 else self.player2} wins by default!")
+        await self.ch.send(f"{self.player1 if player == self.player2 else self.player2} wins by default!")
         self.abort()

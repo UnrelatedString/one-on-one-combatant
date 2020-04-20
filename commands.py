@@ -51,6 +51,14 @@ async def accept(bot, args, message):
     await ch.send('Accepted!')
     await bot.gm.start_game(ch, message.author, opponent)
 
+@cmd('ff', 'lose', 'giveup')
+async def forfeit(bot, args, message):
+    '''Forfeits the game you're currently playing.'''
+    if message.author in bot.gm.games:
+        await bot.gm.games[message.author].forfeit(message.author)
+    else:
+        await message.channel.send("You aren't in a game!")
+
 @cmd('exit','e','k')
 async def kill(bot, args, message):
     '''DELETE THIS LATER but hell if it isn't easier than quitting the process'''
