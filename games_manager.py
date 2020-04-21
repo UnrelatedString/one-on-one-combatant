@@ -25,8 +25,8 @@ class GamesManager:
         else:
             return False
 
-    async def start_game(self, ch, player1, player2):
-        game = Game(ch, player1, player2)
+    async def start_game(self, ch, wait_for, player1, player2):
+        game = Game(ch, wait_for, player1, player2)
         self.games[player1] = game
         self.games[player2] = game
         await game.start()

@@ -13,7 +13,7 @@ def cmd(*aliases):
         return f
     return ind
 
-@cmd('h')
+@cmd('h', '?')
 async def help(bot, args, message):
     '''Prints this list of commands.'''
     await message.channel.send(helptext)
@@ -49,15 +49,7 @@ async def accept(bot, args, message):
         await ch.send(ret)
         return
     await ch.send('Accepted!')
-    await bot.gm.start_game(ch, message.author, opponent)
-
-@cmd('ff', 'lose', 'giveup')
-async def forfeit(bot, args, message):
-    '''Forfeits the game you're currently playing.'''
-    if message.author in bot.gm.games:
-        await bot.gm.games[message.author].forfeit(message.author)
-    else:
-        await message.channel.send("You aren't in a game!")
+    await bot.gm.start_game(ch, bot.client.wait_for, message.author, opponent)
 
 @cmd('exit','e','k')
 async def kill(bot, args, message):
