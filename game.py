@@ -57,7 +57,7 @@ class Game:
         diff = (choice1 - choice2) % 3
         if diff == 0:
             await self.broadcast(f"Both chose **{choices[choice1]}**! A tie!")
-        elif diff == 1:
+        elif diff == 2:
             await self.broadcast(f"**{choices[choice2]}** beats **{choices[choice1]}**! {self.player2.display_name} wins!")
         else:
             await self.broadcast(f"**{choices[choice1]}** beats **{choices[choice2]}**! {self.player1.display_name} wins!")
@@ -71,12 +71,15 @@ class Game:
             await msg.add_reaction('\u270a')
             await msg.add_reaction('\u270b')
             await msg.add_reaction('\u270c') #Did not know those were consecutive!
+            print(f'Done reacting to {msg.id}')
+            await asyncio.sleep(1)
         getreaction = self.wait_for('reaction_add',
                                     lambda reaction, user:
                                         print(reaction.message.id, msg.id) or
                                         reaction.message.id == msg.id and
                                         str(reaction.emoji) in '\u270a\u270b\u270c')
         reaction, _ = await getreaction
+        print(f'Got reaction to {msg.id}')
         choice = ord(str(reaction.emoji)) - 0x270a
         await ch.send(f"You chose **{choices[choice]}**.")
         return choice
