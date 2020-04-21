@@ -37,6 +37,19 @@ class Game:
     def is_ff(self, message):
         return message.channel.type == ChannelType.private and message.content == 'ff'
 
+    async def for_both(self, coro):
+        f1 = asyncio.ensure_future(coro(self.player1))
+        f2 = asyncio.ensure_future(coro(self.player2))
+        return await f1, await f2
+
+    async def name_opponent_to(self, player):
+        opponent = self.player1 if player == self.player2 else self.player2
+        await player.dm_channel.send(f"Your opponent is {opponent.display_name}.")
+
     async def main(self):
+        await self.for_both(self.name_opponent_to)
         await asyncio.sleep(15)
         await self.broadcast("Fifteen seconds have passed and nobody gave up. Draw")
+
+    async def rps(self):
+        pass
