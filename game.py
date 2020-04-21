@@ -2,6 +2,8 @@ import random
 import asyncio
 from discord import ChannelType
 
+choices = ('Rock', 'Paper', 'Scissors')
+
 class Game:
 
     def __init__(self, ch, wait_for, player1, player2):
@@ -22,7 +24,7 @@ class Game:
         if not self.player2.dm_channel:
             await self.player2.create_dm()
 
-        await self.broadcast("THE GAME IS BEGIN !!")
+        #await self.broadcast("THE GAME IS BEGIN !!")
 
         #Allow forfeit at any time
         done, pending = await asyncio.wait({self.main(), self.wait_for_ff()},
@@ -47,9 +49,32 @@ class Game:
         await player.dm_channel.send(f"Your opponent is {opponent.display_name}.")
 
     async def main(self):
-        await self.for_both(self.name_opponent_to)
-        await asyncio.sleep(15)
-        await self.broadcast("Fifteen seconds have passed and nobody gave up. Draw")
+        await self.broadcast("Rock, paper, scissors, shoot!")
+        await self.rps()
 
     async def rps(self):
-        pass
+        choice1, choice2 = await self.for_both(self.rps_to)
+        diff = (choice1 - choice2) % 3
+        if diff == 0:
+            await self.broadcast(f"Both chose **{choices[choice1]}**! A tie!")
+        elif diff == 1:
+            await self.broadcast(f"**{choices[choice2]}** beats **{choices[choice1]}**! {self.player2.display_name} wins!")
+        else:
+            await self.broadcast(f"**{choices[choice1]}** beats **{choices[choice2]}**! {self.player1.display_name} wins!")
+
+    async def rps_to(self, player):
+        ch = player.dm_channel
+        msg = await ch.send("React to choose rock, paper, or scissors")
+        print(msg.id)
+        await msg.add_reaction('\u270a')
+        await msg.add_reaction('\u270b')
+        await msg.add_reaction('\u270c') #Did not know those were consecutive!
+        getreaction = self.wait_for('reaction_add',
+                                    lambda reaction, user:
+                                        print(reaction.message.id, msg.id) or
+                                        reaction.message.id == msg.id and
+                                        str(reaction.emoji) in '\u270a\u270b\u270c')
+        reaction, _ = await getreaction
+        choice = ord(str(reaction.emoji)) - 0x270a
+        await ch.send(f"You chose **{choices[choice]}**.")
+        return choice
