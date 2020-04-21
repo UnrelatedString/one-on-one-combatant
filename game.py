@@ -57,10 +57,13 @@ class Game:
         diff = (choice1 - choice2) % 3
         if diff == 0:
             await self.broadcast(f"Both chose **{choices[choice1]}**! A tie!")
+            return await self.rps()
         elif diff == 2:
             await self.broadcast(f"**{choices[choice2]}** beats **{choices[choice1]}**! {self.player2.display_name} wins!")
+            return self.player2
         else:
             await self.broadcast(f"**{choices[choice1]}** beats **{choices[choice2]}**! {self.player1.display_name} wins!")
+            return self.player1
 
     async def rps_to(self, player):
         ch = player.dm_channel
