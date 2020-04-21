@@ -56,5 +56,10 @@ async def kill(bot, args, message):
     '''DELETE THIS LATER but hell if it isn't easier than quitting the process'''
     await bot.client.close()
 
+@cmd('!')
+async def fight_self(bot, args, message):
+    '''Start a game against yourself for easy testing purposes'''
+    await bot.gm.start_game(message.channel, bot.client.wait_for, message.author, message.author)
+
 for names in sorted(docs): #handle >2000 at some point maybe? eh
     helptext += f'> **{", ".join(names)}:** {docs[names]}\n'

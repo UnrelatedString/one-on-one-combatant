@@ -25,7 +25,7 @@ class Game:
         await self.broadcast("THE GAME IS BEGIN !!")
 
         #Allow forfeit at any time
-        done, pending = await asyncio.wait({self.main(), self.wait_for_ff(), asyncio.sleep(18)},
+        done, pending = await asyncio.wait({self.main(), self.wait_for_ff()},
                                            return_when = asyncio.FIRST_COMPLETED)
         print('game should be over...')
         for task in pending: task.cancel()
