@@ -64,11 +64,13 @@ class Game:
 
     async def rps_to(self, player):
         ch = player.dm_channel
-        msg = await ch.send("React to choose rock, paper, or scissors")
-        print(msg.id)
-        await msg.add_reaction('\u270a')
-        await msg.add_reaction('\u270b')
-        await msg.add_reaction('\u270c') #Did not know those were consecutive!
+        msg = None
+        async with ch.typing():
+            msg = await ch.send("React to choose rock, paper, or scissors")
+            print(msg.id)
+            await msg.add_reaction('\u270a')
+            await msg.add_reaction('\u270b')
+            await msg.add_reaction('\u270c') #Did not know those were consecutive!
         getreaction = self.wait_for('reaction_add',
                                     lambda reaction, user:
                                         print(reaction.message.id, msg.id) or
