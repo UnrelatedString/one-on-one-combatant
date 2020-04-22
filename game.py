@@ -54,6 +54,7 @@ class Game:
         prefers_right = await self.choose_side(rps_winner)
         if prefers_right ^ (rps_winner == self.player2):
             self.player1, self.player2 = self.player2, self.player1
+        #so now player1 is left and player2 is right
         await self.broadcast(f"{self.player1.display_name} went first, topdecked Exodia, and won instantly. A winner is them")
 
     async def rps(self):
@@ -78,11 +79,11 @@ class Game:
             await msg.add_reaction('\u270b')
             await msg.add_reaction('\u270c') #Did not know those were consecutive!
             print(f'Done reacting to {msg.id}')
-            await asyncio.sleep(1)
         getreaction = self.wait_for('reaction_add',
                                     lambda reaction, user:
                                         print(reaction.message.id, msg.id) or
                                         reaction.message.id == msg.id and
+                                        user == player and
                                         str(reaction.emoji) in '\u270a\u270b\u270c')
         reaction, _ = await getreaction
         print(f'Got reaction to {msg.id}')
@@ -96,11 +97,11 @@ class Game:
             msg = await ch.send("Do you want first turn on the left, or second turn on the right?")
             await msg.add_reaction('\U0001f448')
             await msg.add_reaction('\U0001f449')
-            await asyncio.sleep(1)
         getreaction = self.wait_for('reaction_add',
                                     lambda reaction, user:
                                         print(reaction.message.id, msg.id) or
                                         reaction.message.id == msg.id and
+                                        user == player and
                                         str(reaction.emoji) in '\U0001f448\U0001f449')
         reaction, _ = await getreaction
         choice = ord(str(reaction.emoji)) - 0x1f448
