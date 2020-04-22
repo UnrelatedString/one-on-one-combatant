@@ -68,7 +68,7 @@ class Game:
         if prefers_right ^ (rps_winner == self.player2):
             self.player1, self.player2 = self.player2, self.player1
         #so now player1 is left and player2 is right
-        await self.broadcast(self.board.render())
+        await self.show_board()
 
     async def rps(self):
         choice1, choice2 = await self.for_both(self.rps_to)
@@ -96,3 +96,10 @@ class Game:
         choice = await self.get_reaction_choice(player, msg, '\U0001f448\U0001f449') - 0x1f448
         await self.broadcast(f"{player.display_name} has chosen the {('left', 'right')[choice]} side.")
         return choice
+
+    async def show_board(self):
+        text = '''```PLAYER1NAME                             PLAYER2NAME
+@@....... HAND 4/6               HAND 4/6 ......@@@
+
+'''+self.board.render()+'```'
+        await self.broadcast(text)
