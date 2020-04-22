@@ -13,8 +13,8 @@ class Board:
 
     def render(self):
         render_rows = []
-        for row in self.grid:
-            row_lines = [],[],[]
+        for y, row in enumerate(self.grid):
+            row_lines = ['   '],[f'{5-y}  '],['   ']
             for tile in row:
                 if tile.tile_type == SPRING:
                     row_lines[0].append('.@@.')
@@ -25,4 +25,4 @@ class Board:
                     row_lines[1].append('....')
                     row_lines[2].append('....')
             render_rows.append('\n'.join(map(' '.join, row_lines)))
-        return '```\n'+'\n\n'.join(render_rows)+'```'
+        return '```\n'+'\n\n'.join(render_rows)+'\n\n      A    B    C    D    E    F    G    H    I```'
