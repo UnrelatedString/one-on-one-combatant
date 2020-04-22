@@ -62,7 +62,7 @@ class Game:
         return ord(str(reaction.emoji))
 
     async def main(self):
-        await self.broadcast("Rock, paper, scissors, shoot!")
+        await self.broadcast("Determine turn order")
         rps_winner = await self.rps()
         prefers_right = await self.choose_side(rps_winner)
         if prefers_right ^ (rps_winner == self.player2):
@@ -98,8 +98,10 @@ class Game:
         return choice
 
     async def show_board(self):
-        text = '''```PLAYER1NAME                             PLAYER2NAME
-@@....... HAND 4/6               HAND 4/6 ......@@@
-
-'''+self.board.render()+'```'
+        text = '```\n'
+        text += self.player1.display_name
+        text += self.player2.display_name.rjust(50-len(self.player1.display_name)) + '\n'
+        text += '@@....... HAND 4/6              HAND 4/6 ......@@@\n\n'
+        text += self.board.render()
+        text += '```'
         await self.broadcast(text)

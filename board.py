@@ -14,7 +14,7 @@ class Board:
     def render(self):
         render_rows = []
         for y, row in enumerate(self.grid):
-            row_lines = ['   '],[f'{5-y}  '],['   ']
+            row_lines = ['  '],[f'{5-y} '],['  ']
             for tile in row:
                 if tile.tile_type == SPRING:
                     row_lines[0].append('.@@.')
