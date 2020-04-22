@@ -25,4 +25,4 @@ class Board:
                     row_lines[1].append('....')
                     row_lines[2].append('....')
             render_rows.append('\n'.join(map(' '.join, row_lines)))
-        return '\n\n'.join(render_rows)+'\n\n      A    B    C    D    E    F    G    H    I'
+        return '\n\n'.join(render_rows)+'\n\n     A    B    C    D    E    F    G    H    I'
