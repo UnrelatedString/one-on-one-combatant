@@ -27,12 +27,10 @@ class Game:
         if not self.player2.dm_channel:
             await self.player2.create_dm()
 
-        #await self.broadcast("THE GAME IS BEGIN !!")
-
         #Allow forfeit at any time
         done, pending = await asyncio.wait({self.main(), self.wait_for_ff()},
                                            return_when = asyncio.FIRST_COMPLETED)
-        print('game should be over...')
+        print('Game ended')
         for task in pending: task.cancel()
 
     async def wait_for_ff(self):

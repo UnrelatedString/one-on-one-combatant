@@ -33,4 +33,3 @@ class GamesManager:
         del self.games[player1]
         if player2 in self.games: #could be playing myself
             del self.games[player2]
-        await ch.send("GAME OVER")
