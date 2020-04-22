@@ -48,6 +48,16 @@ class Game:
         opponent = self.player1 if player == self.player2 else self.player2
         await player.dm_channel.send(f"Your opponent is {opponent.display_name}.")
 
+    async def get_reaction_choice(self, player, msg, choices):
+        ch = msg.channel
+        async with ch.typing():
+            for emoji in choices:
+                await msg.add_reaction(emoji)
+        def check(reaction, user):
+            return user == player and reaction.message.id == msg.id and str(reaction.emoji) in choices
+        reaction, _ = await self.wait_for('reaction_add', check)
+        return ord(str(reaction.emoji))
+
     async def main(self):
         await self.broadcast("Rock, paper, scissors, shoot!")
         rps_winner = await self.rps()
@@ -72,38 +82,14 @@ class Game:
 
     async def rps_to(self, player):
         ch = player.dm_channel
-        async with ch.typing():
-            msg = await ch.send("React to choose rock, paper, or scissors")
-            print(msg.id)
-            await msg.add_reaction('\u270a')
-            await msg.add_reaction('\u270b')
-            await msg.add_reaction('\u270c') #Did not know those were consecutive!
-            print(f'Done reacting to {msg.id}')
-        getreaction = self.wait_for('reaction_add',
-                                    lambda reaction, user:
-                                        print(reaction.message.id, msg.id) or
-                                        reaction.message.id == msg.id and
-                                        user == player and
-                                        str(reaction.emoji) in '\u270a\u270b\u270c')
-        reaction, _ = await getreaction
-        print(f'Got reaction to {msg.id}')
-        choice = ord(str(reaction.emoji)) - 0x270a
+        msg = await ch.send("React to choose rock, paper, or scissors")
+        choice = await self.get_reaction_choice(player, msg, '\u270a\u270b\u270c') - 0x270a
         await ch.send(f"You chose **{rps_options[choice]}**.")
         return choice
 
     async def choose_side(self, player):
         ch = player.dm_channel
-        async with ch.typing():
-            msg = await ch.send("Do you want first turn on the left, or second turn on the right?")
-            await msg.add_reaction('\U0001f448')
-            await msg.add_reaction('\U0001f449')
-        getreaction = self.wait_for('reaction_add',
-                                    lambda reaction, user:
-                                        print(reaction.message.id, msg.id) or
-                                        reaction.message.id == msg.id and
-                                        user == player and
-                                        str(reaction.emoji) in '\U0001f448\U0001f449')
-        reaction, _ = await getreaction
-        choice = ord(str(reaction.emoji)) - 0x1f448
+        msg = await ch.send("Do you want first turn on the left, or second turn on the right?")
+        choice = await self.get_reaction_choice(player, msg, '\U0001f448\U0001f449') - 0x1f448
         await self.broadcast(f"{player.display_name} has chosen the {('left', 'right')[choice]} side.")
         return choice
