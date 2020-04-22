@@ -2,6 +2,8 @@ import random
 import asyncio
 from discord import ChannelType
 
+from board import Board
+
 rps_options = ('Rock', 'Paper', 'Scissors')
 
 class Game:
@@ -10,6 +12,7 @@ class Game:
         self.ch = ch
         self.wait_for = lambda event, check: wait_for(event, check=check)
         self.player1, self.player2 = player1, player2
+        self.board = Board()
 
     async def broadcast(self, text):
         await asyncio.wait((self.ch.send(text),
@@ -65,7 +68,7 @@ class Game:
         if prefers_right ^ (rps_winner == self.player2):
             self.player1, self.player2 = self.player2, self.player1
         #so now player1 is left and player2 is right
-        await self.broadcast(f"{self.player1.display_name} went first, topdecked Exodia, and won instantly. A winner is them")
+        await self.broadcast(self.board.render())
 
     async def rps(self):
         choice1, choice2 = await self.for_both(self.rps_to)
