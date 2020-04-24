@@ -84,7 +84,7 @@ class Game:
             return await self.rps()
         elif diff == 2:
             await self.broadcast(f"**{rps_options[choice2]}** beats **{rps_options[choice1]}**! {self.ps2.member.display_name} wins!")
-            return self.ps2.member
+            return self.ps2
         else:
             await self.broadcast(f"**{rps_options[choice1]}** beats **{rps_options[choice2]}**! {self.ps1.member.display_name} wins!")
             return self.ps1
