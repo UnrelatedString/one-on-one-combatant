@@ -1,8 +1,11 @@
 import random
 import asyncio
+from base64 import b64decode
+from textwrap import dedent
 from discord import ChannelType
 
 from board import Board
+from playerstate import PlayerState
 
 rps_options = ('Rock', 'Paper', 'Scissors')
 
@@ -12,6 +15,7 @@ class Game:
         self.ch = ch
         self.wait_for = lambda event, check: wait_for(event, check=check)
         self.player1, self.player2 = player1, player2
+        self.pss = {player1: PlayerState(), player2: PlayerState()}
         self.board = Board()
 
     async def broadcast(self, text):
@@ -60,12 +64,17 @@ class Game:
         return ord(str(reaction.emoji))
 
     async def main(self):
+        await self.broadcast("Selecting decks...")
+        await self.for_both(self.select_deck)
         await self.broadcast("Determine turn order")
         rps_winner = await self.rps()
         prefers_right = await self.choose_side(rps_winner)
         if prefers_right ^ (rps_winner == self.player2):
             self.player1, self.player2 = self.player2, self.player1
         #so now player1 is left and player2 is right
+        self.pss[self.player1].set_left()
+        self.pss[self.player2].set_right()
+
         await self.show_board()
 
     async def rps(self):
@@ -96,10 +105,19 @@ class Game:
         return choice
 
     async def show_board(self):
-        text = '```\n'
-        text += self.player1.display_name
-        text += self.player2.display_name.rjust(50-len(self.player1.display_name)) + '\n'
-        text += '@@....... HAND 4/6              HAND 4/6 ......@@@\n\n'
-        text += self.board.render()
-        text += '```'
-        await self.broadcast(text)
+        p1s = self.pss[self.player1]
+        p2s = self.pss[self.player2]
+        text = f'''\
+        ```
+        {self.player1.display_name}{self.player2.display_name.rjust(50-len(self.player1.display_name))}
+        {p1s.display_mana()} HAND 4/6              HAND 4/6 {p2s.display_mana()}
+        
+        '''
+        await self.broadcast(dedent(text) + self.board.render() + '```')
+
+    async def select_deck(self, player):
+        ch = player.dm_channel
+        await ch.send("Paste a base64-encoded deck.")
+        msg = await self.wait_for('message', lambda message: message.channel == ch and message.author == player)
+        rawdeck = b64decode(msg.content).decode()
+        self.pss[player].deck.load_from_text(rawdeck)
