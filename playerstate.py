@@ -1,7 +1,8 @@
 from deck import Deck
 
 class PlayerState:
-    def __init__(self):
+    def __init__(self, member):
+        self.member = member
         self.deck = Deck()
         self.mana = 0
 
@@ -16,6 +17,6 @@ class PlayerState:
         self.mana = self.max_mana
 
     def display_mana(self):
-        return ('@' * self.mana +
+        return ('.' * (9 - self.max_mana) +
                 'O' * (self.max_mana - self.mana) +
-                '.' * (9 - self.max_mana))[::(-1)**self.left]
+                '@' * self.mana)[::(-1)**self.left]
